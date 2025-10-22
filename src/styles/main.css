@@ -1,0 +1,345 @@
+/* PALETA DE COLORES (Tema Oscuro Suave) */
+:root {
+    --primary-color: #4fc3f7; /* Azul claro y vibrante (Énfasis) */
+    --secondary-color: #e0e0e0; /* Texto principal muy claro */
+    --text-color-light: #bdbdbd; /* Texto secundario gris claro */
+    --background-dark: #263238; /* Fondo principal oscuro (Gris azulado profundo) */
+    --card-background: #37474f; /* Fondo de tarjetas/Contenedor principal (Gris más claro que el fondo) */
+    --border-color: #455a64; /* Bordes sutiles */
+    
+    /* Sombras y elevación */
+    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.4); 
+    --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+    /* Colores de Estado (Acentuados, se mantienen para legibilidad) */
+    --success-bg: #4caf5020; /* Fondo transparente o muy sutil */
+    --success-text: #66bb6a; /* Verde legible en fondo oscuro */
+    --warning-bg: #ffc10720; 
+    --warning-text: #ffca28; /* Amarillo legible en fondo oscuro */
+    --error-bg: #f4433620; 
+    --error-text: #ef5350; /* Rojo legible en fondo oscuro */
+}
+
+/* ---------------------------------------------------- */
+/* 1. ESTILOS GLOBALES Y CONTENEDOR */
+/* ---------------------------------------------------- */
+body {
+    /* Tipografía profesional y moderna */
+    font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background-color: var(--background-dark); /* ¡FONDO OSCURO! */
+    margin: 0;
+    padding: 0; 
+    color: var(--secondary-color); /* Texto base claro */
+    line-height: 1.6;
+}
+
+#app-container {
+    max-width: 1300px; 
+    margin: 40px auto; 
+    background-color: var(--card-background); /* Gris medio para el contenedor */
+    padding: 50px; 
+    box-shadow: var(--shadow-subtle); 
+    border-radius: 15px; 
+    border: 1px solid var(--border-color);
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color); /* Azul claro de énfasis */
+    margin-bottom: 5px;
+    font-size: 2.8em;
+    font-weight: 800;
+}
+
+#app-container p:first-of-type {
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--text-color-light);
+    font-size: 1.1em;
+}
+
+h2 {
+    color: var(--secondary-color);
+    margin-top: 0;
+    font-size: 1.7em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 35px;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------- */
+/* 2. FORMULARIO Y ENTRADAS */
+/* ---------------------------------------------------- */
+.card, .results-card {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 30px; 
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-card);
+    background-color: var(--card-background); /* Asegurar que las tarjetas sigan el fondo */
+}
+
+#search-form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 25px;
+    align-items: end;
+}
+@media (max-width: 768px) {
+    #search-form-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 8px;
+    display: block;
+}
+
+#search-form-container input[type="text"] {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #455a64; /* Fondo del input más oscuro */
+    color: var(--secondary-color);
+}
+#search-form-container input[type="text"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.25); 
+}
+
+/* Botón de búsqueda estilizado */
+#search-button {
+    padding: 14px 28px;
+    background-color: var(--primary-color);
+    color: var(--background-dark); /* Color oscuro para el texto del botón en fondo claro */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.1s;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#search-button:hover:not(:disabled) {
+    background-color: #0099cc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+#search-button:disabled {
+    background-color: #455a64;
+    color: var(--text-color-light);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------- */
+/* 3. DASHBOARD (4 TARJETAS DINÁMICAS) */
+/* ---------------------------------------------------- */
+
+#dashboard-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; 
+    margin-top: 25px;
+}
+/* Media queries se mantienen igual... */
+
+.summary-card {
+    display: flex;
+    flex-direction: column;
+    padding: 30px; 
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    transition: background-color 0.3s, border-color 0.3s;
+    border: 1px solid var(--border-color);
+    background-color: #455a64; /* Fondo de tarjeta más claro que el contenedor principal */
+}
+
+/* CLASES DINÁMICAS PARA LAS 4 TARJETAS INDIVIDUALES */
+.status-card-verde { border-top: 4px solid var(--success-text); }
+.status-card-amarillo { border-top: 4px solid var(--warning-text); }
+.status-card-rojo { border-top: 4px solid var(--error-text); }
+
+.summary-card h3 {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--secondary-color); 
+    margin: 0;
+    padding: 0;
+    text-transform: uppercase;
+}
+
+.summary-card .main-metric {
+    font-size: 3em; 
+    font-weight: 900;
+    margin: 5px 0 10px 0;
+    color: var(--primary-color); /* Color de énfasis */
+    line-height: 1;
+}
+
+.summary-card .detail-text {
+    font-size: 1em;
+    color: var(--text-color-light);
+    margin: 5px 0 20px 0;
+    flex-grow: 1; 
+}
+
+/* ---------------------------------------------------- */
+/* 4. INDICADORES DE ESTADO (Texto pequeño y Resultado Global Span) */
+/* ---------------------------------------------------- */
+.status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    display: inline-block;
+    font-size: 0.9em;
+    border: 1px solid transparent;
+}
+/* Los colores de fondo del estado usan el RGBA (transparencia) sobre el fondo oscuro */
+.status-verde { 
+    background-color: var(--success-bg); 
+    color: var(--success-text); 
+    border-color: var(--success-text);
+}
+.status-amarillo { 
+    background-color: var(--warning-bg); 
+    color: var(--warning-text); 
+    border-color: var(--warning-text);
+}
+.status-rojo { 
+    background-color: var(--error-bg); 
+    color: var(--error-text); 
+    border-color: var(--error-text);
+}
+
+/* ---------------------------------------------------- */
+/* 5. ESTILO DEL RESULTADO GLOBAL (CAJA DINÁMICA) */
+/* ---------------------------------------------------- */
+
+#global-result-box {
+    margin-top: 50px;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+/* CLASES DINÁMICAS PARA EL FONDO Y BORDE DE LA CAJA GLOBAL */
+.global-result-box-dynamic.status-box-verde {
+    background-color: #43a04730; /* Fondo más oscuro para caja global */
+    border: 3px solid var(--success-text);
+    color: var(--success-text);
+}
+.global-result-box-dynamic.status-box-amarillo {
+    background-color: #ffb30030;
+    border: 3px solid var(--warning-text);
+    color: var(--warning-text);
+}
+.global-result-box-dynamic.status-box-rojo {
+    background-color: #e5393530;
+    border: 3px solid var(--error-text);
+    color: var(--error-text);
+}
+
+#global-result-box h2 {
+    font-size: 2.2em;
+    border-bottom: none;
+    margin-bottom: 20px;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+/* ... otros estilos de H2 se mantienen ... */
+
+#global-result-box p {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: var(--secondary-color); /* Texto del resumen claro */
+}
+
+/* ---------------------------------------------------- */
+/* 6. TABLA DE NOTICIAS (Estilizada) */
+/* ---------------------------------------------------- */
+#news-table {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0;
+    margin-top: 40px;
+    font-size: 1em;
+    border-radius: 10px;
+    overflow: hidden; 
+    box-shadow: var(--shadow-card);
+}
+
+#news-table th, #news-table td {
+    padding: 16px 20px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#news-table th {
+    background-color: #455a64; /* Fondo de cabecera más oscuro */
+    color: var(--secondary-color); /* Texto claro */
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+/* ... estilos de esquinas se mantienen ... */
+
+#news-table tbody tr {
+    transition: background-color 0.2s;
+    color: var(--text-color-light); /* Texto de celda gris claro */
+}
+
+#news-table tbody tr:nth-child(even) {
+    background-color: #3e4e57; /* Franja oscura para el 'even' */
+}
+#news-table tbody tr:nth-child(odd) {
+    background-color: #37474f; /* Franja clara para el 'odd' */
+}
+
+#news-table tbody tr:hover {
+    background-color: #455a64;
+    cursor: pointer;
+}
+/* ... último borde se mantiene ... */
+
+/* ---------------------------------------------------- */
+/* 7. ESTILO DEL MENSAJE DE CARGA (SOLO TEXTO) */
+/* ---------------------------------------------------- */
+
+.loader-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+    padding: 25px;
+    background-color: #455a64; /* Fondo oscuro */
+    border: 1px solid var(--primary-color); 
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.loader-text-container p {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--primary-color); 
+    text-transform: uppercase;
+}

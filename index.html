@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Dashboard de Análisis de Cobertura Mediática</title>
+		<link rel="stylesheet" href="./src/styles/main.css" />
+	</head>
+	<body>
+		<div id="app-container">
+			<h1>Análisis de Medios N8N</h1>
+
+			<section id="search-section" class="card">
+				<h2>🔎 Nueva Búsqueda</h2>
+				<div id="search-form-container"></div>
+				<div id="loading-indicator" class="loading" style="display: none">
+					Analizando... Por favor, espera.
+				</div>
+			</section>
+
+			<section id="metrics-section" class="results-card" style="display: none">
+				<div id="dashboard-cards-grid">
+					<div class="summary-card coverage-card">
+						<h3>¿Salió en medios?</h3>
+						<p class="main-metric" id="cobertura-value">0</p>
+						<p class="detail-text" id="cobertura-detalle"></p>
+						<div class="status-indicator">
+							<span id="cobertura-estado" class="status"></span>
+						</div>
+					</div>
+
+					<div class="summary-card reach-card">
+						<h3>¿La gente se enteró?</h3>
+						<p class="main-metric" id="alcance-value">0</p>
+						<p class="detail-text" id="alcance-detalle"></p>
+						<div class="status-indicator">
+							<span id="alcance-estado" class="status"></span>
+						</div>
+					</div>
+
+					<div class="summary-card duration-card">
+						<h3>¿Duró en medios?</h3>
+						<p class="main-metric">
+							<span id="duracion-value">0</span>
+							días
+						</p>
+						<p class="detail-text" id="duracion-detalle"></p>
+						<div class="status-indicator">
+							<span id="duracion-estado" class="status"></span>
+						</div>
+					</div>
+
+					<div class="summary-card engagement-card">
+						<h3>¿Se compartió?</h3>
+						<p class="main-metric">
+							<span id="engagement-value">0</span>
+							veces
+						</p>
+						<p class="detail-text" id="engagement-detalle"></p>
+						<div class="status-indicator">
+							<span id="engagement-estado" class="status"></span>
+						</div>
+					</div>
+				</div>
+				<div id="global-result-box">
+					<h2 id="global-result-title">
+						RESULTADO GLOBAL:
+						<span id="resultado-global" class="status">N/A</span>
+					</h2>
+					<p id="global-result-summary"></p>
+					<p class="for-improvement">
+						Para mejorar:
+						<span id="global-result-improvement"></span>
+					</p>
+				</div>
+
+				<div id="summary-metrics">
+					<p>
+						<strong id="organizacion-usada"></strong>
+					</p>
+					<p>
+						<strong id="tema-usado"></strong>
+					</p>
+				</div>
+			</section>
+
+			<section id="details-section" class="results-card" style="display: none">
+				<h2>
+					📰 Noticias Filtradas (
+					<span id="noticias-count">0</span>
+					)
+				</h2>
+				<table id="news-table">
+					<thead>
+						<tr>
+							<th>Título / Tema</th>
+							<th>Snippet (Resumen)</th>
+							<th>Organización (Query Name)</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</section>
+		</div>
+
+		<script type="module" src="./src/index.js"></script>
+	</body>
+</html>

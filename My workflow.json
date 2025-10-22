@@ -1,0 +1,203 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5d9e655d-a5d2-4b05-accc-2fc803c682dd",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        -192
+      ],
+      "id": "bd43d113-d59c-42f1-99c4-742ed4e68e8d",
+      "name": "Webhook",
+      "webhookId": "5d9e655d-a5d2-4b05-accc-2fc803c682dd"
+    },
+    {
+      "parameters": {
+        "url": "https://script.google.com/macros/s/AKfycbyPP_fxSfu6vajpZG_0VNVggSA0eIoW38kSCG1a2zA5UlB9dsNoQn8gGf1UZ9l8oMIQJg/exec",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "getData"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        -192
+      ],
+      "id": "e9aa1a3d-8214-4c5d-8452-1865377421e6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        16
+      ],
+      "id": "9eda9546-b458-4ab1-b15d-698d8793c9d3",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ce5e491-206f-4c4d-9d3f-3069479d6b9b",
+              "name": "p_tema",
+              "value": "={{$json.body.tema}}",
+              "type": "string"
+            },
+            {
+              "id": "94d61968-7543-407a-9e24-2a3c38a1d5d2",
+              "name": "p_organizacion",
+              "value": "={{$json.body.organizacion}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -368
+      ],
+      "id": "1493d736-3807-4d94-b81c-0d1733ec194d",
+      "name": "variables"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =======================================================\n// 1. OBTENCIÓN Y PREPARACIÓN DE DATOS (Leyendo del nodo Set)\n// =======================================================\n\n// Accedemos a las variables persistentes creadas por el nodo Set: p_tema, p_organizacion\n// Nota: Se asume que el Set usa {{$json.body.tema}} y {{$json.body.organizacion}}\nconst temaABuscar = ($json.p_tema || \"\").toLowerCase().trim(); \nconst organizacionABuscar = ($json.p_organizacion || \"\").toLowerCase().trim();\n\n// Acceso a los datos del HTTP Request\ntry {\n    const httpResponse = $node['HTTP Request'].json; \n    const noticias = httpResponse.data; \n\n    if (!Array.isArray(noticias)) {\n        return [{\n            json: {\n                error: \"Fallo al obtener el array de noticias. El nodo HTTP Request no devolvió una lista válida.\",\n                detalles: httpResponse || \"Respuesta inesperada.\"\n            }\n        }];\n    }\n\n    let cobertura = 0;\n    let alcanceEstimado = 0;\n    let fechasPublicacion = [];\n    \n    // Nuevo array para almacenar solo los campos deseados de las noticias filtradas\n    let noticiasFiltradasOutput = []; \n\n    // =======================================================\n    // 2. CÁLCULO DE MÉTRICAS CON FILTRADO DOBLE (AND)\n    // =======================================================\n\n    if (temaABuscar.length > 0 && organizacionABuscar.length > 0) { \n        \n        noticias.forEach(nota => {\n            const title = nota.Title || \"\"; \n            const queryName = nota['Query Name'] || \"\"; // Campo exacto del JSON\n            \n            const cumpleTema = title.toLowerCase().includes(temaABuscar);\n            const cumpleOrganizacion = queryName.toLowerCase().includes(organizacionABuscar);\n\n            if (cumpleTema && cumpleOrganizacion) { \n                \n                cobertura++;\n                \n                const reach = parseFloat(nota['Reach (new)']);\n                if (!isNaN(reach)) {\n                    alcanceEstimado += reach; \n                }\n\n                if (nota.Date) {\n                    fechasPublicacion.push(new Date(nota.Date)); \n                }\n                \n                // Agregamos la noticia filtrada al nuevo array con los campos solicitados\n                noticiasFiltradasOutput.push({\n                    \"Title\": title,\n                    \"Snippet\": nota.Snippet || \"No disponible\",\n                    \"QueryName_Organizacion\": queryName,\n                    \"Title_Tema\": title \n                });\n            }\n        });\n    }\n\n    // =======================================================\n    // 3. VERIFICACIÓN Y DEPURACIÓN (Si la cobertura es 0)\n    // =======================================================\n    \n    if (cobertura === 0) {\n        return [{\n            json: {\n                error: \"FILTRO FALLIDO: Cobertura 0.\",\n                detalles: `No se encontraron noticias con (TEMA: '${temaABuscar}') AND (ORGANIZACIÓN: '${organizacionABuscar}').`,\n                datos_para_inspeccion: noticias \n            }\n        }];\n    }\n    \n    // =======================================================\n    // 4. CÁLCULO DE DURACIÓN Y EVALUACIÓN\n    // =======================================================\n    \n    let duracion = 0;\n    if (fechasPublicacion.length > 1) {\n        const minFecha = Math.min(...fechasPublicacion);\n        const maxFecha = Math.max(...fechasPublicacion);\n        duracion = Math.floor((maxFecha - minFecha) / (1000 * 60 * 60 * 24)); \n    }\n\n    const UMBRAL_COBERTURA = 5;      \n    const UMBRAL_ALCANCE = 50000;    \n    \n    const estadoCobertura = cobertura >= UMBRAL_COBERTURA ? \"Excelente\" : cobertura >= 2 ? \"Bien\" : \"Regular\";\n    const estadoAlcance = alcanceEstimado >= UMBRAL_ALCANCE ? \"Excelente\" : \"Regular\";\n    const estadoDuracion = duracion >= 3 ? \"Excelente\" : \"Regular\";\n\n    let colorGlobal;\n    let resultadoGlobal;\n\n    if (cobertura >= UMBRAL_COBERTURA || alcanceEstimado >= UMBRAL_ALCANCE) {\n        colorGlobal = \"verde\";\n        resultadoGlobal = \"FUNCIONÓ\";\n    } else {\n        colorGlobal = \"amarillo\";\n        resultadoGlobal = \"REGULAR\";\n    }\n\n    // =======================================================\n    // 5. DEVOLVER EL OBJETO FINAL (Métricas + Detalles)\n    // =======================================================\n\n    return [{\n        json: {\n            // Parámetros usados en la búsqueda\n            organizacion_usada: organizacionABuscar,\n            tema_usado: temaABuscar,\n            \n            // Métricas calculadas\n            cobertura_mediatica: cobertura,\n            alcance_estimado: Math.round(alcanceEstimado), \n            duracion_dias: duracion,\n            engagement: Math.round(alcanceEstimado * 0.05),\n            \n            // Estados y resumen\n            estado_cobertura: estadoCobertura,\n            estado_alcance: estadoAlcance,\n            estado_duracion: estadoDuracion,\n            color_indicador: colorGlobal,\n            resultado_global: resultadoGlobal,\n            \n            // Detalle de noticias filtradas\n            noticias_filtradas: noticiasFiltradasOutput \n        }\n    }];\n\n} catch (error) {\n    return [{\n        json: {\n            error: \"Error interno en el procesamiento del análisis.\",\n            detalles: error.message\n        }\n    }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        -288
+      ],
+      "id": "751d2ced-b4ef-4fe5-8cb6-8a4c074b6dc3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        -288
+      ],
+      "id": "39951564-b61f-493d-a1a0-1df801937848",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "variables": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dc4f1a21-a8a8-40d5-bfb7-473a86112d0b",
+  "meta": {
+    "instanceId": "293a032e58e6cad84c827ca651e2f896009d51f8f6fb001af050e8df30e746cf"
+  },
+  "id": "2Kx4XIR2MfbP8zkJ",
+  "tags": []
+}
