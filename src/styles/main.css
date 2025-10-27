@@ -1,345 +1,673 @@
-/* PALETA DE COLORES (Tema Oscuro Suave) */
+/* ------------------------------------------- */
+/* Fichero: main.css                           */
+/* Estilos principales para el dashboard o web */
+/* Incluye estilos para Análisis de Comparación*/
+/* Versión con Estilos Avanzados y Modernos    */
+/* ------------------------------------------- */
+
+/* 1. Variables CSS y Fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&display=swap');
+
 :root {
-    --primary-color: #4fc3f7; /* Azul claro y vibrante (Énfasis) */
-    --secondary-color: #e0e0e0; /* Texto principal muy claro */
-    --text-color-light: #bdbdbd; /* Texto secundario gris claro */
-    --background-dark: #263238; /* Fondo principal oscuro (Gris azulado profundo) */
-    --card-background: #37474f; /* Fondo de tarjetas/Contenedor principal (Gris más claro que el fondo) */
-    --border-color: #455a64; /* Bordes sutiles */
+    /* Paleta de Colores (Tema Oscuro Suave y Elegante) */
+    --primary-accent: #66bb6a; /* Verde esmeralda para énfasis (similar a éxito) */
+    --secondary-accent: #4fc3f7; /* Azul cielo para un segundo acento o enlaces */
     
-    /* Sombras y elevación */
-    --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.4); 
-    --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --text-primary: #e0e0e0;     /* Texto principal claro */
+    --text-secondary: #bdbdbd;   /* Texto secundario/descripciones gris claro */
+    --text-muted: #818181;       /* Texto terciario, fechas, etc. */
 
-    /* Colores de Estado (Acentuados, se mantienen para legibilidad) */
-    --success-bg: #4caf5020; /* Fondo transparente o muy sutil */
-    --success-text: #66bb6a; /* Verde legible en fondo oscuro */
-    --warning-bg: #ffc10720; 
-    --warning-text: #ffca28; /* Amarillo legible en fondo oscuro */
-    --error-bg: #f4433620; 
-    --error-text: #ef5350; /* Rojo legible en fondo oscuro */
+    --bg-dark: #1a1e26;          /* Fondo más oscuro de la página */
+    --bg-card: #2e353f;          /* Fondo de tarjetas y secciones */
+    --bg-input: #3a414c;         /* Fondo de campos de entrada */
+    --bg-hover: #3a414c;         /* Color de fondo al pasar el ratón */
+    --bg-light-card: #3a414c;    /* Para elementos que necesitan destacar un poco más */
+
+    --border-color: #455a64;     /* Bordes sutiles y separadores */
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra general suave */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);  /* Sombra para tarjetas */
+
+    /* Colores de Estado - Fondo sutil y Texto vibrante */
+    --status-success-bg: rgba(102, 187, 106, 0.15); /* Verde con transparencia */
+    --status-success-text: #66bb6a;
+    --status-warning-bg: rgba(255, 202, 40, 0.15);  /* Amarillo con transparencia */
+    --status-warning-text: #ffca28;
+    --status-error-bg: rgba(239, 83, 80, 0.15);    /* Rojo con transparencia */
+    --status-error-text: #ef5350;
+
+    /* Tipografía */
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+
+    /* Espaciado y Radio de Borde */
+    --spacing-unit: 8px;
+    --border-radius-sm: 6px;
+    --border-radius-md: 10px;
+    --border-radius-lg: 15px;
+
+    /* Transiciones */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
 }
 
-/* ---------------------------------------------------- */
-/* 1. ESTILOS GLOBALES Y CONTENEDOR */
-/* ---------------------------------------------------- */
-body {
-    /* Tipografía profesional y moderna */
-    font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    background-color: var(--background-dark); /* ¡FONDO OSCURO! */
+/* 2. Reset y Estilos Globales */
+* {
+    box-sizing: border-box;
     margin: 0;
-    padding: 0; 
-    color: var(--secondary-color); /* Texto base claro */
-    line-height: 1.6;
+    padding: 0;
 }
 
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar estilizado (Solo para navegadores basados en WebKit) */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+body::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+    border: 2px solid var(--bg-dark);
+}
+
+/* Contenedor principal de la aplicación */
 #app-container {
-    max-width: 1300px; 
-    margin: 40px auto; 
-    background-color: var(--card-background); /* Gris medio para el contenedor */
-    padding: 50px; 
-    box-shadow: var(--shadow-subtle); 
-    border-radius: 15px; 
+    max-width: 1400px;
+    margin: 40px auto;
+    background-color: var(--bg-card);
+    padding: 50px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-light);
     border: 1px solid var(--border-color);
+}
+
+/* Encabezados */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    margin-bottom: 0.8em;
+    font-weight: 700;
 }
 
 h1 {
     text-align: center;
-    color: var(--primary-color); /* Azul claro de énfasis */
-    margin-bottom: 5px;
-    font-size: 2.8em;
+    color: var(--primary-accent);
+    font-size: 3.2em;
     font-weight: 800;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 10px rgba(102, 187, 106, 0.3);
+    margin-bottom: 10px;
 }
 
 #app-container p:first-of-type {
     text-align: center;
     margin-bottom: 50px;
-    color: var(--text-color-light);
-    font-size: 1.1em;
+    color: var(--text-secondary);
+    font-size: 1.15em;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 h2 {
-    color: var(--secondary-color);
-    margin-top: 0;
-    font-size: 1.7em;
-    border-bottom: 1px solid var(--border-color);
+    font-size: 2em;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 15px;
     margin-bottom: 35px;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--secondary-accent); /* H2 usa el azul para contraste */
 }
 
-/* ---------------------------------------------------- */
-/* 2. FORMULARIO Y ENTRADAS */
-/* ---------------------------------------------------- */
+/* 3. Estilos de Formularios y Componentes de Entrada */
 .card, .results-card {
+    background-color: var(--bg-light-card); /* Más claro para destacar */
     border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 30px; 
+    border-radius: var(--border-radius-md);
+    padding: 30px;
     margin-bottom: 30px;
     box-shadow: var(--shadow-card);
-    background-color: var(--card-background); /* Asegurar que las tarjetas sigan el fondo */
 }
 
 #search-form-container {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr auto; /* Dos columnas para inputs, una para botón */
     gap: 25px;
-    align-items: end;
-}
-@media (max-width: 768px) {
-    #search-form-container {
-        grid-template-columns: 1fr;
-    }
+    align-items: end; /* Alinea los items en la parte inferior */
+    margin-bottom: 40px;
 }
 
 .input-group label {
     font-weight: 600;
-    color: var(--secondary-color);
-    margin-bottom: 8px;
+    color: var(--text-primary);
+    margin-bottom: 10px;
     display: block;
+    font-size: 1em;
 }
 
 #search-form-container input[type="text"] {
-    padding: 12px;
+    padding: 14px 18px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: var(--border-radius-sm);
+    font-size: 1em;
     width: 100%;
     box-sizing: border-box;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    background-color: #455a64; /* Fondo del input más oscuro */
-    color: var(--secondary-color);
+    background-color: var(--bg-input); /* Fondo del input */
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
+
 #search-form-container input[type="text"]:focus {
-    border-color: var(--primary-color);
+    border-color: var(--secondary-accent);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.25); 
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3); /* Sombra de enfoque azul */
 }
 
 /* Botón de búsqueda estilizado */
 #search-button {
     padding: 14px 28px;
-    background-color: var(--primary-color);
-    color: var(--background-dark); /* Color oscuro para el texto del botón en fondo claro */
+    background-color: var(--primary-accent);
+    color: var(--bg-dark); /* Texto oscuro para contraste */
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
-    font-size: 18px;
+    font-size: 1.1em;
     font-weight: 700;
-    transition: background-color 0.3s, transform 0.1s;
+    transition: background-color var(--transition-normal), transform var(--transition-fast), box-shadow var(--transition-normal);
     text-transform: uppercase;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 #search-button:hover:not(:disabled) {
-    background-color: #0099cc;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    background-color: #5cb85c; /* Verde ligeramente más oscuro */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 #search-button:disabled {
-    background-color: #455a64;
-    color: var(--text-color-light);
+    background-color: var(--border-color);
+    color: var(--text-muted);
     cursor: not-allowed;
     box-shadow: none;
 }
 
-/* ---------------------------------------------------- */
-/* 3. DASHBOARD (4 TARJETAS DINÁMICAS) */
-/* ---------------------------------------------------- */
-
+/* 4. Dashboard de Métricas (Grid de 4 Tarjetas) */
 #dashboard-cards-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 30px; 
-    margin-top: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adaptativo */
+    gap: 25px;
+    margin-top: 30px;
+    margin-bottom: 40px;
 }
-/* Media queries se mantienen igual... */
 
 .summary-card {
     display: flex;
     flex-direction: column;
-    padding: 30px; 
-    border-radius: 12px;
+    padding: 30px;
+    border-radius: var(--border-radius-md);
     box-shadow: var(--shadow-card);
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: all var(--transition-normal);
     border: 1px solid var(--border-color);
-    background-color: #455a64; /* Fondo de tarjeta más claro que el contenedor principal */
+    background-color: var(--bg-card); /* Fondo más oscuro para métricas */
 }
 
-/* CLASES DINÁMICAS PARA LAS 4 TARJETAS INDIVIDUALES */
-.status-card-verde { border-top: 4px solid var(--success-text); }
-.status-card-amarillo { border-top: 4px solid var(--warning-text); }
-.status-card-rojo { border-top: 4px solid var(--error-text); }
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Clases dinámicas para las 4 tarjetas individuales (borde superior de color) */
+.status-card-verde { border-top: 5px solid var(--status-success-text); }
+.status-card-amarillo { border-top: 5px solid var(--status-warning-text); }
+.status-card-rojo { border-top: 5px solid var(--status-error-text); }
 
 .summary-card h3 {
-    font-size: 1em;
-    font-weight: 600;
-    color: var(--secondary-color); 
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--text-primary);
     margin: 0;
     padding: 0;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .summary-card .main-metric {
-    font-size: 3em; 
+    font-family: var(--font-heading);
+    font-size: 3.5em; /* Tamaño más grande */
     font-weight: 900;
-    margin: 5px 0 10px 0;
-    color: var(--primary-color); /* Color de énfasis */
+    margin: 10px 0 15px 0;
+    color: var(--primary-accent); /* Color principal de métrica */
     line-height: 1;
+    text-shadow: 0 0 8px rgba(102, 187, 106, 0.2);
 }
 
 .summary-card .detail-text {
     font-size: 1em;
-    color: var(--text-color-light);
+    color: var(--text-secondary);
     margin: 5px 0 20px 0;
-    flex-grow: 1; 
+    flex-grow: 1;
+    line-height: 1.5;
 }
 
-/* ---------------------------------------------------- */
-/* 4. INDICADORES DE ESTADO (Texto pequeño y Resultado Global Span) */
-/* ---------------------------------------------------- */
+/* 5. Indicadores de Estado (Texto pequeño y Resultado Global Span) */
 .status {
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 15px;
+    border-radius: var(--border-radius-sm);
     font-weight: 700;
     display: inline-block;
     font-size: 0.9em;
-    border: 1px solid transparent;
-}
-/* Los colores de fondo del estado usan el RGBA (transparencia) sobre el fondo oscuro */
-.status-verde { 
-    background-color: var(--success-bg); 
-    color: var(--success-text); 
-    border-color: var(--success-text);
-}
-.status-amarillo { 
-    background-color: var(--warning-bg); 
-    color: var(--warning-text); 
-    border-color: var(--warning-text);
-}
-.status-rojo { 
-    background-color: var(--error-bg); 
-    color: var(--error-text); 
-    border-color: var(--error-text);
+    border: 1px solid transparent; /* Para un look más consistente */
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
-/* ---------------------------------------------------- */
-/* 5. ESTILO DEL RESULTADO GLOBAL (CAJA DINÁMICA) */
-/* ---------------------------------------------------- */
+.status-verde {
+    background-color: var(--status-success-bg);
+    color: var(--status-success-text);
+    border-color: var(--status-success-text);
+}
+.status-amarillo {
+    background-color: var(--status-warning-bg);
+    color: var(--status-warning-text);
+    border-color: var(--status-warning-text);
+}
+.status-rojo {
+    background-color: var(--status-error-bg);
+    color: var(--status-error-text);
+    border-color: var(--status-error-text);
+}
 
+/* 6. Estilo del Resultado Global (Caja Dinámica) */
 #global-result-box {
     margin-top: 50px;
-    padding: 40px;
-    border-radius: 12px;
+    padding: 45px;
+    border-radius: var(--border-radius-lg);
     text-align: center;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     font-weight: 600;
-    border: 1px solid transparent;
+    border: 2px solid transparent; /* Borde más prominente */
+    transition: all var(--transition-normal);
 }
 
-/* CLASES DINÁMICAS PARA EL FONDO Y BORDE DE LA CAJA GLOBAL */
+/* Clases dinámicas para el fondo y borde de la caja global */
 .global-result-box-dynamic.status-box-verde {
-    background-color: #43a04730; /* Fondo más oscuro para caja global */
-    border: 3px solid var(--success-text);
-    color: var(--success-text);
+    background-color: var(--status-success-bg);
+    border-color: var(--status-success-text);
+    color: var(--status-success-text);
 }
 .global-result-box-dynamic.status-box-amarillo {
-    background-color: #ffb30030;
-    border: 3px solid var(--warning-text);
-    color: var(--warning-text);
+    background-color: var(--status-warning-bg);
+    border-color: var(--status-warning-text);
+    color: var(--status-warning-text);
 }
 .global-result-box-dynamic.status-box-rojo {
-    background-color: #e5393530;
-    border: 3px solid var(--error-text);
-    color: var(--error-text);
+    background-color: var(--status-error-bg);
+    border-color: var(--status-error-text);
+    color: var(--status-error-text);
 }
 
 #global-result-box h2 {
-    font-size: 2.2em;
+    font-family: var(--font-heading);
+    font-size: 2.5em;
     border-bottom: none;
-    margin-bottom: 20px;
-    display: flex; 
+    margin-bottom: 25px;
+    display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
-/* ... otros estilos de H2 se mantienen ... */
+
+#global-result-box h2 .global-icon-color {
+    margin-right: 15px;
+    font-size: 1.2em; /* Icono más grande */
+}
+#global-result-box h2 .status {
+    font-size: 0.8em; /* Ajuste para el span de estado */
+    margin-left: 10px;
+}
 
 #global-result-box p {
     font-size: 1.2em;
-    margin: 10px 0;
-    color: var(--secondary-color); /* Texto del resumen claro */
+    margin: 15px 0;
+    color: var(--text-secondary); /* Texto del resumen claro */
+    line-height: 1.7;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* ---------------------------------------------------- */
-/* 6. TABLA DE NOTICIAS (Estilizada) */
-/* ---------------------------------------------------- */
-#news-table {
+.status-text-verde { color: var(--status-success-text); }
+.status-text-amarillo { color: var(--status-warning-text); }
+.status-text-rojo { color: var(--status-error-text); }
+
+
+/* 7. Tabla de Noticias (Estilizada) */
+.news-details-container {
+    margin-top: 60px;
+    padding: 30px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+}
+.news-details-container h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--secondary-accent);
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.news-table {
     width: 100%;
-    border-collapse: separate; 
+    border-collapse: separate;
     border-spacing: 0;
-    margin-top: 40px;
-    font-size: 1em;
-    border-radius: 10px;
-    overflow: hidden; 
+    font-size: 0.95em;
+    border-radius: var(--border-radius-md);
+    overflow: hidden; /* Asegura que las esquinas redondeadas se vean */
     box-shadow: var(--shadow-card);
 }
 
-#news-table th, #news-table td {
-    padding: 16px 20px;
+.news-table th, .news-table td {
+    padding: 18px 20px;
     text-align: left;
     vertical-align: top;
     border-bottom: 1px solid var(--border-color);
 }
 
-#news-table th {
-    background-color: #455a64; /* Fondo de cabecera más oscuro */
-    color: var(--secondary-color); /* Texto claro */
+.news-table th {
+    background-color: var(--bg-light-card); /* Fondo de cabecera */
+    color: var(--text-primary);
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9em;
+    letter-spacing: 0.05em;
 }
-/* ... estilos de esquinas se mantienen ... */
+.news-table th:first-child { border-top-left-radius: var(--border-radius-md); }
+.news-table th:last-child { border-top-right-radius: var(--border-radius-md); }
 
-#news-table tbody tr {
-    transition: background-color 0.2s;
-    color: var(--text-color-light); /* Texto de celda gris claro */
-}
-
-#news-table tbody tr:nth-child(even) {
-    background-color: #3e4e57; /* Franja oscura para el 'even' */
-}
-#news-table tbody tr:nth-child(odd) {
-    background-color: #37474f; /* Franja clara para el 'odd' */
+.news-table tbody tr {
+    transition: background-color var(--transition-fast);
+    color: var(--text-secondary);
 }
 
-#news-table tbody tr:hover {
-    background-color: #455a64;
+.news-table tbody tr:nth-child(even) {
+    background-color: var(--bg-card);
+}
+.news-table tbody tr:nth-child(odd) {
+    background-color: var(--bg-light-card);
+}
+
+.news-table tbody tr:hover {
+    background-color: var(--bg-hover);
     cursor: pointer;
 }
-/* ... último borde se mantiene ... */
+.news-table tbody tr:last-child td {
+    border-bottom: none;
+}
 
-/* ---------------------------------------------------- */
-/* 7. ESTILO DEL MENSAJE DE CARGA (SOLO TEXTO) */
-/* ---------------------------------------------------- */
+.news-table td .text-sm {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 5px;
+    display: block;
+}
 
+/* 8. Sección de Comparación (Mejorada) */
+.comparison-results-container {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    padding: 30px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.comparison-title {
+    font-family: var(--font-heading);
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--primary-accent);
+    margin-bottom: 30px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+#comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.comparison-card {
+    background-color: var(--bg-light-card);
+    border-radius: var(--border-radius-md);
+    padding: 30px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alineación a la izquierda */
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    position: relative; /* Para el borde de color */
+}
+
+.comparison-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px; /* Borde vertical de acento */
+    height: 100%;
+    border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+}
+
+.comparison-good::before { background-color: var(--status-success-text); }
+.comparison-bad::before { background-color: var(--status-error-text); }
+/* Para un estado neutro si fuera necesario */
+.comparison-neutral::before { background-color: var(--status-warning-text); }
+
+
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+.comparison-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+}
+
+.comparison-description {
+    font-size: 0.95em;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.comparison-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: auto; /* Empuja el contenido hacia abajo si hay espacio */
+}
+
+.comparison-value {
+    font-family: var(--font-heading);
+    font-size: 3.8em; /* Gran tamaño para el valor principal */
+    font-weight: 900;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.comparison-card.comparison-good .comparison-value { color: var(--status-success-text); }
+.comparison-card.comparison-bad .comparison-value { color: var(--status-error-text); }
+
+.comparison-icon {
+    margin-right: 15px; /* Espacio entre icono y número */
+    font-size: 1em; /* Ajuste el tamaño del icono relativo al valor */
+    display: flex;
+    align-items: center;
+}
+
+.comparison-status-box {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.comparison-status-text {
+    font-size: 0.9em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+}
+
+.comparison-summary-text {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 250px; /* Limita el ancho del texto de resumen */
+}
+
+/* 9. Loader y Mensajes de Carga */
 .loader-text-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 30px 0;
-    padding: 25px;
-    background-color: #455a64; /* Fondo oscuro */
-    border: 1px solid var(--primary-color); 
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin: 40px 0;
+    padding: 30px;
+    background-color: var(--bg-light-card);
+    border: 2px solid var(--secondary-accent); /* Borde de acento */
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .loader-text-container p {
     margin: 0;
-    font-size: 1.3em;
+    font-size: 1.4em;
     font-weight: 700;
-    color: var(--primary-color); 
+    color: var(--secondary-accent);
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+}
+
+.loader-text-container p::before {
+    content: '⏳'; /* Emoji de reloj de arena */
+    display: inline-block;
+    margin-right: 15px;
+    font-size: 1.2em;
+    animation: spin 2s linear infinite; /* Animación para el icono */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* 10. Media Queries para Responsividad */
+@media (max-width: 1200px) {
+    #app-container {
+        margin: 20px auto;
+        padding: 30px;
+    }
+    h1 { font-size: 2.8em; }
+    h2 { font-size: 1.8em; }
+    .summary-card .main-metric { font-size: 3em; }
+    .comparison-value { font-size: 3.2em; }
+}
+
+@media (max-width: 992px) {
+    #search-form-container {
+        grid-template-columns: 1fr 1fr; /* Dos columnas para pantallas medianas */
+        gap: 20px;
+    }
+    #search-button {
+        grid-column: span 2; /* Botón ocupa todo el ancho */
+    }
+    #dashboard-cards-grid, #comparison-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Más flexible */
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    #app-container {
+        margin: 15px auto;
+        padding: 20px;
+    }
+    h1 { font-size: 2.2em; margin-bottom: 5px;}
+    #app-container p:first-of-type { margin-bottom: 30px; font-size: 1em;}
+    h2 { font-size: 1.5em; margin-bottom: 25px;}
+    .card, .news-details-container, .comparison-results-container {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    #search-form-container {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+    }
+    #search-button {
+        grid-column: span 1;
+        width: 100%;
+    }
+    #dashboard-cards-grid, #comparison-grid {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+        gap: 15px;
+    }
+    .summary-card .main-metric { font-size: 2.8em; }
+    #global-result-box { padding: 30px; margin-top: 30px;}
+    #global-result-box h2 { font-size: 1.8em; flex-direction: column; }
+    #global-result-box h2 .global-icon-color { margin-right: 0; margin-bottom: 10px;}
+    #global-result-box h2 .status { margin-left: 0; margin-top: 10px;}
+    #global-result-box p { font-size: 1em; margin: 10px 0;}
+
+    .news-table th, .news-table td { padding: 12px 15px; }
+    .news-details-container h3 { font-size: 1.5em; margin-bottom: 20px;}
+
+    .comparison-title { font-size: 1.8em; margin-bottom: 20px;}
+    .comparison-value { font-size: 3em; }
+    .comparison-content { flex-direction: column; align-items: flex-start; }
+    .comparison-icon { margin-bottom: 10px; }
+    .comparison-status-box { text-align: left; align-items: flex-start; margin-top: 15px;}
+    .comparison-summary-text { max-width: 100%; }
+
+    .loader-text-container p { font-size: 1.1em; }
+    .loader-text-container p::before { margin-right: 10px; font-size: 1em; }
+}
+
+@media (max-width: 480px) {
+    #app-container { padding: 15px; }
+    h1 { font-size: 1.8em; }
+    #app-container p:first-of-type { font-size: 0.9em;}
+    h2 { font-size: 1.3em; }
+    .summary-card .main-metric { font-size: 2.5em; }
+    .comparison-value { font-size: 2.5em; }
+    .loader-text-container p { font-size: 0.9em; }
 }

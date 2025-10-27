@@ -1,50 +1,96 @@
-# 📊 Dashboard de Análisis de Impacto Mediático (Media Insight)
+# **📰 Dashboard de Análisis de Impacto Mediático**
 
-Este proyecto es una interfaz de usuario (Front-end) diseñada para visualizar el impacto y el rendimiento de notas de prensa, campañas o temas específicos en los medios de comunicación y plataformas digitales.
+Este proyecto implementa un dashboard interactivo de **Front-end puro** (HTML, CSS, JavaScript) diseñado para analizar el impacto mediático de una campaña o un tema específico para una organización dada. El sistema consume datos a través de un WebHook externo (N8N) y presenta las métricas clave, las calificaciones de rendimiento y, crucialmente, permite la **Comparación en Vivo** de dos análisis.
 
-El dashboard está optimizado para la claridad y la toma de decisiones rápidas, utilizando un diseño profesional de **Tema Oscuro Suave (Soft Dark Mode)** para mejorar la ergonomía visual.
+## **✨ Características Principales**
 
-## ✨ Características Principales
+* **Análisis de Métricas Clave:** Muestra de forma clara la Cobertura Mediática, el Alcance Estimado, la Duración de la Campaña y el Engagement calculado.  
+* **Calificación Dinámica:** Las métricas principales se califican automáticamente (**Verde, Amarillo, Rojo**) basándose en umbrales de negocio predefinidos.  
+* **Comparación en Vivo (A vs B):** Permite ejecutar una segunda búsqueda (B) y compararla métrica por métrica con el resultado principal (A), mostrando indicadores de **MEJOR/PEOR** y la diferencia numérica.  
+* **Diseño Profesional:** Implementa un tema **Soft Dark Mode** (Modo Oscuro Suave) para una excelente usabilidad visual.  
+* **Tabla de Resultados Detallada:** Lista las noticias que cumplen con los criterios de filtro.
 
-- **Análisis Dinámico de Métricas:** Visualización en tiempo real de cuatro métricas clave (Cobertura, Alcance, Duración y Engagement).
-- **Indicadores de Estado:** Las tarjetas y el resultado global cambian dinámicamente de color (Verde, Amarillo, Rojo) según umbrales de rendimiento predefinidos (gestionados por el Backend/N8N).
-- **Diseño Profesional (Dark Theme):** Paleta de colores optimizada para fondos oscuros, proporcionando una experiencia visual relajante y enfocada, ideal para consultoría o canales de noticias.
-- **Integración con Backend (N8N):** Diseñado para consumir datos de un _workflow_ de N8N o cualquier API que devuelva los datos en formato JSON estructurado.
-- **Detalle de Noticias:** Tabla interactiva para visualizar las fuentes y artículos específicos que contribuyen a las métricas.
+## **📐 Arquitectura Técnica**
 
-## ⚙️ Estructura del Proyecto
+El dashboard opera bajo una arquitectura de tres capas conceptuales, gestionadas principalmente a través de un único archivo HTML con simulación de modularización JS.
 
-El proyecto está compuesto por los siguientes archivos clave:
+| Capa | Archivos de Referencia | Función |
+| :---- | :---- | :---- |
+| **Presentación (UI)** | index.html, src/styles/main.css | Estructura de la UI y aplicación de estilos responsive y dinámicos (clases de estado de Tailwind). |
+| **Lógica de Negocio y Presentación (JS)** | src/index.js, src/components/MetricsDashboard.js, src/components/LiveComparison.js | Captura de la entrada, gestión de estados (A y B), **cálculo de umbrales** (Verde/Amarillo/Rojo), y renderizado de todos los componentes. |
+| **Capa de Datos (API/N8N)** | src/api/media-analysis.js | Se comunica con un WebHook de N8N para delegar la tarea pesada de *data mining* y cálculo de métricas complejas. |
 
-| Archivo                              | Descripción                                                                                                                                                                                                                          |
-| :----------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index.html`                         | Estructura principal de la aplicación. Contiene los contenedores para el formulario, el dashboard y la tabla de resultados.                                                                                                          |
-| `src/components/MetricsDashboard.js` | **Lógica central del Front-end.** Contiene las funciones para inyectar datos en el DOM, aplicar la lógica de calificación (Verde/Amarillo/Rojo) a las tarjetas individuales y al resultado global, y manejar los detalles textuales. |
-| `src/styles/main.css`                | **Estilos y Diseño (Soft Dark Theme).** Define la paleta de colores, la tipografía y todo el look & feel del dashboard, incluyendo los estilos dinámicos de las tarjetas y el mensaje de carga.                                      |
-| `[Tu archivo JS principal]`          | (Asumido) Archivo que maneja la interacción del formulario (`#search-button`), la llamada a la API (simulada) y el control del estado de carga (`#loading-message`).                                                                 |
+## **🛠️ Configuración y Ejecución**
 
-## 🚀 Instalación y Ejecución
+El proyecto depende de la correcta configuración de su WebHook de N8N como fuente de datos.
+
+### **1\. Configuración del WebHook (N8N)**
+
+El Front-end está configurado para llamar al WebHook de N8N con la siguiente estructura de *payload*:
+
+#### **Endpoint de la API:**
+
+// La URL de tu WebHook de N8N.  
+const N8N\_WEBHOOK\_URL \= '\[\[https://alexzion1.app.n8n.cloud/webhook/5d9e655d-a5d2-4b05-accc-2fc803c682dd\](https://alexzion1.app.n8n.cloud/webhook/5d9e655d-a5d2-4b05-accc-2fc803c682dd)\]';
+
+#### **Payload Requerido (JSON POST):**
+
+El sistema envía la siguiente información para iniciar el análisis:
+
+{  
+  "tema": "El tema que se está buscando (ej: 'Lanzamiento de la Nueva Serie')",  
+  "organizacion": "La organización de referencia (ej: 'Netflix')"  
+}
+
+#### **Respuesta Esperada:**
+
+El WebHook de N8N debe devolver un JSON con la estructura del análisis, conteniendo las métricas clave, estados y la lista de noticias filtradas.
+
+### **2\. Umbrales de Calificación**
+
+La lógica de calificación (verde/amarillo/rojo) está actualmente *hardcodeada* en el módulo de presentación (MetricsDashboard.js conceptualmente).
+
+| Métrica | Condición (Ejemplos Duros) | Estado Asignado |
+| :---- | :---- | :---- |
+| **Cobertura** | $\>= 3$ menciones | Verde |
+| **Duración** | $\>= 3$ días en medios | Verde |
+| **Alcance** | data.estado\_alcance \=== 'Excelente' (viene de la API) | Verde |
+
+Cualquier ajuste a estos umbrales debe realizarse directamente en el código JavaScript de renderizado.
+
+## **🔗 Módulos Clave**
+
+| Módulo | Responsabilidad Principal | Notas |
+| :---- | :---- | :---- |
+| src/index.js | Controlador de Eventos y Gestión de Estado | Contiene los estados mainData y comparisonData. |
+| src/components/MetricsDashboard.js | Renderizado y Calificación de la Búsqueda A | Se encarga de la inyección de valores en las tarjetas principales. |
+| src/components/LiveComparison.js | Lógica de Comparación B vs A | Calcula las diferencias (**MEJOR/PEOR**) y renderiza las tarjetas de comparación dinámica. |
+| src/api/media-analysis.js | Capa de Acceso a Datos | Solo contiene la función asíncrona getMediaAnalysis. |
+
+## **🚀 Instalación y Ejecución**
 
 Este es un proyecto puramente Front-end (HTML/CSS/JS). Para ejecutarlo:
 
-1.  Clona o descarga el repositorio.
-2.  Abre el archivo `index.html` en tu navegador web.
+1. Clona o descarga el repositorio.  
+2. Abre el archivo index.html en tu navegador web.
 
-> **Nota:** Para que el dashboard funcione dinámicamente, debes simular o conectar una fuente de datos que envíe la estructura JSON esperada.
+**Nota:** Para que el dashboard funcione dinámicamente, debes simular o conectar una fuente de datos que envíe la estructura JSON esperada.
 
-## 🎯 Lógica de Calificación (Umbrales)
+## **🎯 Lógica de Calificación (Umbrales Detallados)**
 
-El componente `MetricsDashboard.js` implementa los siguientes umbrales para determinar el color de las tarjetas:
+El componente que maneja la lógica de calificación implementa los siguientes umbrales para determinar el color de las tarjetas:
 
-| Métrica              | Regla                                 | Estado y Color                                                      |
-| :------------------- | :------------------------------------ | :------------------------------------------------------------------ |
-| **Cobertura**        | Si = 0 medios                         | Malo (Rojo)                                                         |
-|                      | Si = 1 o 2 medios                     | Regular (Amarillo)                                                  |
-|                      | Si >= 3 medios                        | Bien (Verde)                                                        |
-| **Duración**         | Si = 0 días                           | Malo (Rojo)                                                         |
-|                      | Si = 1 o 2 días                       | Regular (Amarillo)                                                  |
-|                      | Si >= 3 días                          | Bien (Verde)                                                        |
-| **Alcance**          | Basado en el `estado_alcance` de N8N  | Bien (Verde) si es 'Excelente', Regular (Amarillo) si es 'Regular'. |
-| **Engagement**       | Si Engagement Value < 10              | Malo (Rojo)                                                         |
-|                      | Si Engagement Value >= 20             | Bien (Verde)                                                        |
-| **Resultado Global** | Basado en el `color_indicador` de N8N | Verde, Amarillo o Rojo.                                             |
+| Métrica | Regla | Estado y Color |
+| :---- | :---- | :---- |
+| **Cobertura** | Si $= 0$ medios | Malo (Rojo) |
+|  | Si $= 1$ o $2$ medios | Regular (Amarillo) |
+|  | Si $\\ge 3$ medios | Bien (Verde) |
+| **Duración** | Si $= 0$ días | Malo (Rojo) |
+|  | Si $= 1$ o $2$ días | Regular (Amarillo) |
+|  | Si $\\ge 3$ días | Bien (Verde) |
+| **Alcance** | Basado en el estado\_alcance de N8N | Bien (Verde) si es 'Excelente', Regular (Amarillo) si es 'Regular'. Otros son Rojo. |
+| **Engagement** | Si Engagement Value $\< 10$ | Malo (Rojo) |
+|  | Si Engagement Value $\\ge 20$ | Bien (Verde) |
+|  | Otros | Regular (Amarillo) |
+| **Resultado Global** | Basado en el color\_indicador de N8N | Verde, Amarillo o Rojo. |
+

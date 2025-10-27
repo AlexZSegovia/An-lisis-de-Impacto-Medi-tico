@@ -1,37 +1,42 @@
-/**
- * @param {string} organizacion - El nombre de la organización a buscar.
- * @param {string} tema - El tema de la cobertura a buscar.
- * @returns {object} El primer objeto de la respuesta de N8N con métricas y detalles.
- */
-export async function getMediaAnalysis(organizacion, tema) {
-	const webhookUrl =
-		"https://alexzion1.app.n8n.cloud/webhook/5d9e655d-a5d2-4b05-accc-2fc803c682dd";
+const N8N_WEBHOOK_URL =
+	"https://alexzion1.app.n8n.cloud/webhook/5d9e655d-a5d2-4b05-accc-2fc803c682dd";
 
-	const body = { organizacion, tema };
+/**
+ * @param {string} tema
+ * @param {string} organizacion
+ * @returns {Promise<Array<object>>}
+ */
+export async function getMediaAnalysis(tema, organizacion) {
+	if (!tema || !organizacion) {
+		throw new Error(
+			"Tanto el tema como la organización son campos obligatorios."
+		);
+	}
 
 	try {
-		const response = await fetch(webhookUrl, {
+		const response = await fetch(N8N_WEBHOOK_URL, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(body),
+			body: JSON.stringify({
+				tema: tema,
+				organizacion: organizacion,
+			}),
 		});
 
 		if (!response.ok) {
+			const errorText = await response.text();
 			throw new Error(
-				`Error HTTP: ${response.status} - ${response.statusText}`
+				`Error en la respuesta de N8N (Código ${
+					response.status
+				}): ${errorText.substring(0, 100)}...`
 			);
 		}
 
-		const data = await response.json();
-
-		return data[0];
+		return await response.json();
 	} catch (error) {
-		console.error("Fallo en la llamada al Webhook:", error);
-		return {
-			error: true,
-			mensaje: error.message || "Error desconocido al contactar el servicio.",
-		};
+		console.error("Error en la función getMediaAnalysis:", error);
+		throw new Error(`Fallo en la comunicación con la API: ${error.message}`);
 	}
 }

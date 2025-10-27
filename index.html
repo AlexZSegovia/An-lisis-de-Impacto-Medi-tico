@@ -3,104 +3,265 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Dashboard de Análisis de Cobertura Mediática</title>
+		<title>Dashboard de Análisis Mediático</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+			rel="stylesheet" />
+
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							"slate-900": "#0f172a",
+							"slate-200": "#e2e8f0",
+						},
+					},
+				},
+			};
+		</script>
 		<link rel="stylesheet" href="./src/styles/main.css" />
 	</head>
-	<body>
-		<div id="app-container">
-			<h1>Análisis de Medios N8N</h1>
+	<body class="p-6 bg-slate-900 text-slate-200">
+		<div class="container mx-auto max-w-7xl">
+			<h1
+				class="text-3xl font-extrabold text-white mb-6 border-b border-slate-700 pb-3">
+				Dashboard de Análisis de Cobertura Mediática
+			</h1>
 
-			<section id="search-section" class="card">
-				<h2>🔎 Nueva Búsqueda</h2>
-				<div id="search-form-container"></div>
-				<div id="loading-indicator" class="loading" style="display: none">
-					Analizando... Por favor, espera.
+			<div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-10">
+				<form id="search-form" class="space-y-4">
+					<div class="grid md:grid-cols-2 gap-4">
+						<div>
+							<label
+								for="tema"
+								class="block text-sm font-medium text-gray-300 mb-1">
+								Tema a Buscar (Ej: 'Lanzamiento de Producto')
+							</label>
+							<input
+								type="text"
+								id="tema"
+								value="Lanzarote Cycling"
+								name="tema"
+								required
+								placeholder="Escribe el tema de la noticia..."
+								class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+						</div>
+						<div>
+							<label
+								for="organizacion"
+								class="block text-sm font-medium text-gray-300 mb-1">
+								Organización / Medio (Ej: 'TechCorp')
+							</label>
+							<input
+								type="text"
+								id="organizacion"
+								value="TripAdvisor"
+								name="organizacion"
+								required
+								placeholder="Escribe el nombre de la organización..."
+								class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+						</div>
+					</div>
+					<div class="flex justify-center">
+						<button
+							type="submit"
+							class="w-full md:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-bold text-lg shadow-md transition duration-200 flex items-center justify-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-6 w-6 mr-2"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-9 0V3h4v2m-4 0h4m-2 2v2m-2 0h4m-2 4v2m-2 0h4m-2 4v2m-2 0h4" />
+							</svg>
+							Analizar Cobertura
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<div id="loading-indicator" class="hidden text-center py-12">
+				<svg
+					class="animate-spin h-8 w-8 text-indigo-500 mx-auto"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24">
+					<circle
+						class="opacity-25"
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						stroke-width="4"></circle>
+					<path
+						class="opacity-75"
+						fill="currentColor"
+						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+				</svg>
+				<p class="mt-3 text-lg text-indigo-400">Analizando datos en N8N...</p>
+			</div>
+
+			<div id="dashboard-content" class="hidden">
+				<div id="global-result-box" class="p-6 rounded-xl mt-10 mb-10 border-2">
+					<h2
+						id="global-result-title"
+						class="text-3xl font-extrabold mb-2 flex items-center justify-center text-center"></h2>
+					<p
+						id="global-result-summary"
+						class="text-lg text-gray-300 text-center"></p>
+					<p class="mt-4 text-sm text-gray-400 text-center">
+						Sugerencias de mejora:
+						<span id="global-result-improvement" class="font-semibold"></span>
+					</p>
 				</div>
-			</section>
 
-			<section id="metrics-section" class="results-card" style="display: none">
-				<div id="dashboard-cards-grid">
-					<div class="summary-card coverage-card">
-						<h3>¿Salió en medios?</h3>
-						<p class="main-metric" id="cobertura-value">0</p>
-						<p class="detail-text" id="cobertura-detalle"></p>
-						<div class="status-indicator">
-							<span id="cobertura-estado" class="status"></span>
-						</div>
-					</div>
-
-					<div class="summary-card reach-card">
-						<h3>¿La gente se enteró?</h3>
-						<p class="main-metric" id="alcance-value">0</p>
-						<p class="detail-text" id="alcance-detalle"></p>
-						<div class="status-indicator">
-							<span id="alcance-estado" class="status"></span>
-						</div>
-					</div>
-
-					<div class="summary-card duration-card">
-						<h3>¿Duró en medios?</h3>
-						<p class="main-metric">
-							<span id="duracion-value">0</span>
-							días
+				<h2 class="text-2xl font-bold text-white mb-6">Métricas Detalladas</h2>
+				<div
+					id="metrics-section"
+					class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+					<div
+						class="summary-card coverage-card bg-gray-800 p-5 rounded-xl shadow-md border-l-4">
+						<h3 class="text-lg font-semibold text-gray-200">
+							Cobertura Mediática
+						</h3>
+						<p
+							class="text-4xl font-extrabold text-white mt-2"
+							id="cobertura-value">
+							0
 						</p>
-						<p class="detail-text" id="duracion-detalle"></p>
-						<div class="status-indicator">
-							<span id="duracion-estado" class="status"></span>
-						</div>
-					</div>
-
-					<div class="summary-card engagement-card">
-						<h3>¿Se compartió?</h3>
-						<p class="main-metric">
-							<span id="engagement-value">0</span>
-							veces
+						<p class="text-sm text-gray-400 mt-1" id="cobertura-detalle">
+							Número de menciones y artículos encontrados.
 						</p>
-						<p class="detail-text" id="engagement-detalle"></p>
-						<div class="status-indicator">
-							<span id="engagement-estado" class="status"></span>
-						</div>
+						<p class="mt-3" id="cobertura-estado"></p>
+					</div>
+
+					<div
+						class="summary-card reach-card bg-gray-800 p-5 rounded-xl shadow-md border-l-4">
+						<h3 class="text-lg font-semibold text-gray-200">
+							Alcance Estimado
+						</h3>
+						<p
+							class="text-4xl font-extrabold text-white mt-2"
+							id="alcance-value">
+							0
+						</p>
+						<p class="text-sm text-gray-400 mt-1" id="alcance-detalle">
+							Número de lectores potenciales.
+						</p>
+						<p class="mt-3" id="alcance-estado"></p>
+					</div>
+
+					<div
+						class="summary-card duration-card bg-gray-800 p-5 rounded-xl shadow-md border-l-4">
+						<h3 class="text-lg font-semibold text-gray-200">Duración (Días)</h3>
+						<p
+							class="text-4xl font-extrabold text-white mt-2"
+							id="duracion-value">
+							0
+						</p>
+						<p class="text-sm text-gray-400 mt-1" id="duracion-detalle">
+							Tiempo que el tema se mantuvo vigente.
+						</p>
+						<p class="mt-3" id="duracion-estado"></p>
+					</div>
+
+					<div
+						class="summary-card engagement-card bg-gray-800 p-5 rounded-xl shadow-md border-l-4">
+						<h3 class="text-lg font-semibold text-gray-200">
+							Engagement Estimado
+						</h3>
+						<p
+							class="text-4xl font-extrabold text-white mt-2"
+							id="engagement-value">
+							0
+						</p>
+						<p class="text-sm text-gray-400 mt-1" id="engagement-detalle">
+							Interacciones estimadas en redes.
+						</p>
+						<p class="mt-3" id="engagement-estado"></p>
 					</div>
 				</div>
-				<div id="global-result-box">
-					<h2 id="global-result-title">
-						RESULTADO GLOBAL:
-						<span id="resultado-global" class="status">N/A</span>
-					</h2>
-					<p id="global-result-summary"></p>
-					<p class="for-improvement">
-						Para mejorar:
-						<span id="global-result-improvement"></span>
-					</p>
+
+				<div class="mt-12 p-6 bg-gray-800 rounded-xl shadow-xl">
+					<h3
+						class="text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">
+						Comparar Búsqueda Actual (A) con Otra (B)
+					</h3>
+					<form
+						id="comparison-search-form"
+						class="flex flex-col md:flex-row gap-4">
+						<input
+							type="text"
+							id="tema-comparacion"
+							placeholder="Tema de la Comparación (B)"
+							class="flex-1 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+							required />
+						<input
+							type="text"
+							id="organizacion-comparacion"
+							placeholder="Organización/Competidor (B)"
+							class="flex-1 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+							required />
+						<button
+							type="submit"
+							class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 shadow-md flex items-center justify-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-5 w-5 mr-2"
+								viewBox="0 0 20 20"
+								fill="currentColor">
+								<path
+									d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
+							</svg>
+							Comparar Búsquedas
+						</button>
+					</form>
+					<div
+						id="comparison-loading-indicator"
+						class="hidden mt-4 text-center py-4">
+						<svg
+							class="animate-spin h-6 w-6 text-blue-500 mx-auto"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24">
+							<circle
+								class="opacity-25"
+								cx="12"
+								cy="12"
+								r="10"
+								stroke="currentColor"
+								stroke-width="4"></circle>
+							<path
+								class="opacity-75"
+								fill="currentColor"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						<p class="mt-1 text-sm text-blue-400">
+							Analizando datos de comparación...
+						</p>
+					</div>
 				</div>
 
-				<div id="summary-metrics">
-					<p>
-						<strong id="organizacion-usada"></strong>
-					</p>
-					<p>
-						<strong id="tema-usado"></strong>
-					</p>
-				</div>
-			</section>
+				<div id="live-comparison-results"></div>
 
-			<section id="details-section" class="results-card" style="display: none">
-				<h2>
-					📰 Noticias Filtradas (
-					<span id="noticias-count">0</span>
-					)
-				</h2>
-				<table id="news-table">
-					<thead>
-						<tr>
-							<th>Título / Tema</th>
-							<th>Snippet (Resumen)</th>
-							<th>Organización (Query Name)</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-			</section>
+				<div class="mt-8 flex justify-center">
+					<button
+						id="toggle-comparison-btn"
+						class="hidden px-6 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-white font-semibold transition duration-200 shadow-md flex items-center">
+						Mostrar/Ocultar Comparaciones
+					</button>
+				</div>
+
+				<div id="comparison-results" class="hidden"></div>
+
+				<div id="news-details" class="mt-10"></div>
+			</div>
 		</div>
 
 		<script type="module" src="./src/index.js"></script>
