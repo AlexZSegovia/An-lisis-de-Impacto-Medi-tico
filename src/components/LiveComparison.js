@@ -1,6 +1,9 @@
+// El formatter principal debe estar disponible globalmente en este módulo o importado.
 const formatter = new Intl.NumberFormat("es-ES");
 
 /**
+ * Crea la tarjeta HTML para una métrica individual de la comparación en vivo.
+ *
  * @param {{title: string, mainValue: number, comparisonValue: number, unit: string, formatter: Intl.NumberFormat}} config
  * @returns {string}
  */
@@ -16,8 +19,16 @@ function createLiveComparisonCard({
 	const valA = mainValue || 0;
 	const valB = comparisonValue || 0;
 
-	const diff = valB - valA;
+	// --- LÓGICA DE ESCALADO Y DIFERENCIA CORREGIDA ---
+	// 1. Si es Engagement, escalamos el valor a mostrar/comparar (redondeo y / 5).
+	// 2. Si no es Engagement, usamos el valor original.
+	const scaledValueA = isEngagement ? Math.round(valA / 5) : valA;
+	const scaledValueB = isEngagement ? Math.round(valB / 5) : valB;
+
+	// 3. Calculamos la diferencia usando los valores escalados/mostrados.
+	const diff = scaledValueB - scaledValueA;
 	const diffAbs = Math.abs(diff);
+	// ---------------------------------------------------
 
 	let status;
 	let icon;
@@ -44,12 +55,9 @@ function createLiveComparisonCard({
 	const diffTextFormatted =
 		diff === 0 ? "Sin diferencia" : `${formatter.format(diffAbs)}`;
 
-	const displayValueA = isEngagement
-		? `${formatter.format(Math.round(valA / 5))}%`
-		: formatter.format(valA);
-	const displayValueB = isEngagement
-		? `${formatter.format(Math.round(valB / 5))}%`
-		: formatter.format(valB);
+	// Formateamos los valores escalados para mostrarlos en la tarjeta.
+	const displayValueA = formatter.format(scaledValueA);
+	const displayValueB = formatter.format(scaledValueB);
 
 	const statusClass =
 		diff > 0 ? "status-verde" : diff < 0 ? "status-rojo" : "status-amarillo";
@@ -91,7 +99,7 @@ export function renderLiveComparison(mainData, comparisonData) {
             <div class="p-4 bg-gray-800/20 border border-gray-700 rounded-xl text-center mt-4 text-gray-400">
                 Realiza la búsqueda principal primero para activar la comparación.
             </div>
-         `;
+          `;
 		return;
 	}
 	if (!comparisonData) {
@@ -99,7 +107,7 @@ export function renderLiveComparison(mainData, comparisonData) {
             <div class="p-4 bg-gray-800/20 border border-gray-700 rounded-xl text-center mt-4 text-gray-400">
                 Inicia una búsqueda de comparación para ver el análisis detallado.
             </div>
-         `;
+          `;
 		return;
 	}
 
@@ -130,8 +138,8 @@ export function renderLiveComparison(mainData, comparisonData) {
 			formatter: formatter,
 		},
 		{
-			title: "Engagement (Interacciones/5)",
-			unit: "%",
+			title: "Engagement (Interacciones)",
+			unit: "",
 			mainValue: mainData.engagement || 0,
 			comparisonValue: comparisonData.engagement || 0,
 			formatter: engagementFormatter,
